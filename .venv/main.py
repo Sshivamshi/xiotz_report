@@ -171,4 +171,4 @@ if user_input.lower() == 'yes':
     
     print(f"PDF report generated and saved in: {output_pdf}")
 else:
-    print("PDF generation cancelled.")
+    print("PDF cancelled.")
