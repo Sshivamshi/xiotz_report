@@ -2,38 +2,68 @@ import json
 import os
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Image
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Frame
 from reportlab.lib.units import inch
+from reportlab.graphics.shapes import Drawing
+from reportlab.graphics.charts.piecharts import Pie
 from datetime import datetime
-import matplotlib.pyplot as plt
 
-# Function to load JSON data
+# Function to load JSON data with debugging
 def load_data_from_json(file_name):
-    with open(file_name, 'r') as f:
-        data = json.load(f)
-    return data
+    try:
+        print(f"Trying to load JSON from: {file_name}")
+        with open(file_name, 'r') as f:
+            content = f.read()
+            print("JSON file content:\n", content)
+            data = json.loads(content)
+        return data
+    except Exception as e:
+        print(f"Error loading JSON file: {e}")
+        return None
 
-# Function to create a pie chart using matplotlib
-def create_pie_chart(data, output_image):
-    # Extract labels and values
+# Function to create a pie chart based on JSON data
+def create_pie_chart(data):
+    # Prepare the data for the pie chart
     labels = [record['Agent'] for record in data]
     values = [float(record['Count percentages'].strip('%')) for record in data]
 
-    # Create a pie chart
-    plt.figure(figsize=(6, 6))
-    plt.pie(values, labels=labels, autopct='%1.1f%%', startangle=90, colors=plt.cm.Paired.colors)
+    # Create a drawing object
+    drawing = Drawing(400, 200)
 
-    # Equal aspect ratio ensures the pie is drawn as a circle.
-    plt.axis('equal')
+    # Create the Pie chart object
+    pie = Pie()
+    pie.x = 150  # X position of the pie chart
+    pie.y = 50   # Y position of the pie chart
+    pie.width = 150
+    pie.height = 150
 
-    # Save pie chart as an image file
-    plt.savefig(output_image, format='png')
-    plt.close()
+    pie.data = values
+    pie.labels = labels
+
+    # Style the pie chart
+    pie.slices.strokeWidth = 0.5
+    pie.slices.strokeColor = colors.black
+    pie.slices[0].fillColor = colors.blue
+    pie.slices[1].fillColor = colors.green
+    pie.slices[2].fillColor = colors.red
+    pie.slices[3].fillColor = colors.purple
+    pie.slices[4].fillColor = colors.orange
+    pie.slices[5].fillColor = colors.pink
+    pie.slices[6].fillColor = colors.yellow
+
+    # Add the pie chart to the drawing
+    drawing.add(pie)
+    
+    return drawing
 
 # Function to generate the PDF report
 def generate_pdf_report(json_file, header_image, footer_image, output_pdf, username, rows):
     # Load data from JSON file
     data = load_data_from_json(json_file)
+    
+    if data is None:
+        print("Failed to load JSON data. PDF generation aborted.")
+        return
     
     # Limit data to the specified number of rows
     data = data[:rows]
@@ -91,22 +121,21 @@ def generate_pdf_report(json_file, header_image, footer_image, output_pdf, usern
     content.append(Spacer(1, 20))  # Space before the pie chart
 
     # Create and add pie chart to the PDF content
-    pie_chart_image = os.path.join(os.path.dirname(output_pdf), 'pie_chart.png')
-    create_pie_chart(data, pie_chart_image)
-    
-    # Add the pie chart image to the PDF content
-    pie_chart_img = Image(pie_chart_image, 7 * inch, 7 * inch)
-    content.append(pie_chart_img)
+    pie_chart = create_pie_chart(data)
+    content.append(pie_chart)
 
     content.append(Spacer(1, 20))  # Space before the footer
 
+    # Create a frame to fix header and footer positions
+    frame = Frame(0.75 * inch, 1.75 * inch, 7 * inch, 8.5 * inch, showBoundary=0)
+    
     # Build the PDF
     pdf.build(content, 
-              onFirstPage=lambda canvas, doc: draw_header_footer(canvas, header_image, footer_image), 
-              onLaterPages=lambda canvas, doc: draw_header_footer(canvas, header_image, footer_image))
+              onFirstPage=lambda canvas, doc: draw_header_footer(canvas, doc, header_image, footer_image), 
+              onLaterPages=lambda canvas, doc: draw_header_footer(canvas, doc, header_image, footer_image))
 
 # Function to draw header and footer on each page
-def draw_header_footer(canvas, header_image, footer_image):
+def draw_header_footer(canvas, doc, header_image, footer_image):
     # Draw header at the top of the page
     canvas.drawImage(header_image, 0.1 * inch, 9.5 * inch, width=7.5 * inch, height=1.0 * inch)
     
@@ -135,7 +164,7 @@ if user_input.lower() == 'yes':
     os.makedirs(output_folder, exist_ok=True)  # Create the folder if it doesn't exist
     
     # Define output PDF path
-    output_pdf = os.path.join(output_folder, 'report_with_piechart.pdf')
+    output_pdf = os.path.join(output_folder, 'report.pdf')
 
     # Generate the PDF report
     generate_pdf_report(json_file, header_image, footer_image, output_pdf, username, rows)
