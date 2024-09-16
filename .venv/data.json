@@ -1,0 +1,57 @@
+[
+    {
+      "Agent": "agent-CentOS-7-Bhaskar-thetard",
+      "Count": "529,099",
+      "Count percentages": "25.991%"
+    },
+    {
+      "Agent": "agent-CentOS-8-Bhaskar-thetard",
+      "Count": "391,935",
+      "Count percentages": "19.253%"
+    },
+    {
+      "Agent": "agent-debian-11-Bhaskar-thetard",
+      "Count": "368,784",
+      "Count percentages": "18.116%"
+    },
+    {
+      "Agent": "agent-Debian-10-Bhaskar-Thetard",
+      "Count": "366,178",
+      "Count percentages": "17.987%"
+    },
+    {
+      "Agent": "agent-rhel-7.9-Bhaskar-Thetard",
+      "Count": "305,527",
+      "Count percentages": "15.008%"
+    },
+    {
+      "Agent": "07-xIoTz-Rohit-Pc",
+      "Count": "23,886",
+      "Count percentages": "1.173%"
+    },
+    {
+      "Agent": "03-xIoTz-Vaishnavi-Laptop",
+      "Count": "23,090",
+      "Count percentages": "1.134%"
+    },
+    {
+      "Agent": "28-xiotz-kaushal-hpvictus",
+      "Count": "15,207",
+      "Count percentages": "0.747%"
+    },
+    {
+      "Agent": "29-xiotz-daniel-vostro",
+      "Count": "8,730",
+      "Count percentages": "0.429%"
+    },
+    {
+      "Agent": "01-xIoTz-Sheltan-LOQ",
+      "Count": "1,819",
+      "Count percentages": "0.089%"
+    },
+    {
+      "Agent": "Agent-Win22-Bhaskar-Sigmard",
+      "Count": "1,481",
+      "Count percentages": "0.073%"
+    }
+  ]
